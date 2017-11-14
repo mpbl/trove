@@ -66,7 +66,7 @@ struct uncoalesced_store_array<array<T, s> > {
         int offset=0,
         int stride=1) {
         ptr[offset] = d.head;
-        uncoalesced_store_array<array<T, s-1> >::impl(d.tail, ptr, offset+1,
+        uncoalesced_store_array<array<T, s-1> >::impl(d.tail, ptr, offset+stride,
                                                       stride);
     }
     __host__ __device__ static void impl(
@@ -75,7 +75,7 @@ struct uncoalesced_store_array<array<T, s> > {
         int offset=0,
         int stride=1) {
         ptr[offset] = d.head;
-        uncoalesced_store_array<array<T, s-1> >::impl(d.tail, ptr, offset+1,
+        uncoalesced_store_array<array<T, s-1> >::impl(d.tail, ptr, offset+stride,
                                                       stride);
     }
 };
@@ -156,15 +156,17 @@ __host__ __device__ Array warp_load(
 template<typename Array>
 __host__ __device__ void uncoalesced_store(const Array& t,
                                            typename Array::head_type* ptr,
+                                           int offset=0,
                                            int stride=1) {
-    detail::uncoalesced_store_array<Array>::impl(t, ptr, 0, stride);
+    detail::uncoalesced_store_array<Array>::impl(t, ptr, offset, stride);
 }
 
 template<typename Array>
 __host__ __device__ void uncoalesced_store(const Array& t,
                                            volatile typename Array::head_type* ptr,
+                                           int offset=0,
                                            int stride=1) {
-    detail::uncoalesced_store_array<Array>::impl(t, ptr, 0, stride);
+    detail::uncoalesced_store_array<Array>::impl(t, ptr, offset, stride);
 }
 
 } //end namespace trove
